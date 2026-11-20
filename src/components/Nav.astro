@@ -1,0 +1,46 @@
+---
+import { getCollection } from 'astro:content';
+import { href, t, unprefixed } from '../i18n/utils';
+import { languages, type Lang } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const tr = t(lang);
+const path = unprefixed(Astro.url.pathname);
+const hasNotes = (await getCollection('notes', ({ data }) => import.meta.env.DEV || !data.draft)).length > 0;
+const items = [
+  { label: tr('nav.projects'), to: '/projects/' },
+  { label: tr('nav.about'), to: '/about/' },
+  ...(hasNotes ? [{ label: tr('nav.notes'), to: '/notes/' }] : []),
+  { label: tr('nav.art'), to: '/art/' },
+  { label: tr('nav.contact'), to: '/contact/' },
+];
+const current = (to: string) => path.startsWith(to) || (to === '/projects/' && path.startsWith('/work/'));
+---
+
+<header class="nav">
+  <a href={href(lang, '/')} class="nav__home">Zeki Inceoglu</a>
+  <nav aria-label="Main" class="nav__links">
+    {items.map((i) => <a href={href(lang, i.to)} aria-current={current(i.to) ? 'page' : undefined}>{i.label}</a>)}
+  </nav>
+  <div class="nav__langs">
+    {
+      (Object.keys(languages) as Lang[]).map((l) => (
+        <a href={href(l, path)} hreflang={l} aria-current={l === lang ? 'true' : undefined}>
+          {languages[l]}
+        </a>
+      ))
+    }
+  </div>
+</header>
+
+<style>
+  .nav { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 32px; padding: 24px 0; font-size: 15px; }
+  .nav__home { font-weight: 700; text-decoration: none; margin-right: auto; }
+  .nav__links { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+  .nav__langs { display: flex; gap: 12px; font-size: 13px; }
+  a { text-decoration: none; color: var(--muted); }
+  .nav__home { color: var(--ink); }
+  a:hover, [aria-current] { color: var(--ink); }
+  .nav__links [aria-current='page'] { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: 6px; }
+</style>

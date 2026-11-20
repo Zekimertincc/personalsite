@@ -1,0 +1,35 @@
+---
+title: Climat Fitness
+summary: A mobile app for an eco-responsible gym in Montreuil, where the machines turn your effort into electricity. First slice — pre-registration, sign-up and login — in 12 screens.
+kind: dev
+year: 2026
+order: 9
+status: in-progress
+context: SAE S5 · BUT 3
+team: 5 students
+role: UI/UX and all the code so far — everything but the data model
+stack: [Expo SDK 58, React Native, TypeScript, expo-router, react-hook-form · Zod]
+featured: true
+cover: ../../../assets/work/climat-cover.jpg
+coverAlt: Three screens of the Climat Fitness app — home, plan choice and member space
+---
+
+
+## The flow
+
+Pre-register in four steps without an account, turn it into an account in four more, then log in. Twelve screens: home, your details, plan choice (Standard or Gaïa), summary, confirmation, account creation, plan, account summary, email check, login, forgotten password, member space.
+
+## Walkthrough
+
+<video src="/video/climat-walkthrough.mp4" controls muted playsinline preload="metadata" style="width:100%;border-radius:8px;border:1px solid #e4e7ec"></video>
+
+## How it's built
+
+- **One codebase.** Expo builds iOS, Android and web from the same code. Tested on a phone with Expo Go, demoed in the browser.
+- **`app/` = screens.** With expo-router every file in `app/` is a screen, so the folder reads like the flow.
+- **Forms.** react-hook-form with Zod schemas: one source of truth for validation, like the 12-character password rule.
+- **`theme.ts`.** The mockups' colours live in one constants file, so design and code can't drift apart.
+
+## Still to come, from the brief
+
+A dynamic QR code to enter the gym, at-home video classes and coach follow-up, and a dashboard of the energy the machines produce.

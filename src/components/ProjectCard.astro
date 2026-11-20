@@ -1,0 +1,51 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Illustration from './Illustration.astro';
+import { href, t, workSlug } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props { lang: Lang; entry: CollectionEntry<'work'> }
+const { lang, entry } = Astro.props;
+const tr = t(lang);
+const d = entry.data;
+---
+
+<a class="card" href={href(lang, `/work/${workSlug(entry)}/`)}>
+  {
+    (d.cover || d.illustration) && (
+      <div class="card__media">
+        {d.cover ? <Image src={d.cover} alt={d.coverAlt ?? d.title} widths={[400, 800]} sizes="(min-width: 1000px) 340px, 100vw" /> : <Illustration kind={d.illustration!} />}
+      </div>
+    )
+  }
+  <div class="card__body">
+    <div class="card__top">
+      <span class="muted card__ctx">{d.context ?? d.year}</span>
+      {d.status && <span class="badge" data-status={d.status}>{tr(`status.${d.status}`)}</span>}
+    </div>
+    <h3 class="card__title">{d.title}</h3>
+    <p class="card__sum">{d.summary}</p>
+    {d.role && <p class="card__role"><span class="muted">{tr('work.role')} · </span>{d.role}</p>}
+    <div class="card__stack">{d.stack.slice(0, 4).map((s) => <span class="tag">{s}</span>)}</div>
+    <span class="card__more">{tr('home.readMore')} <span class="arrow">→</span></span>
+  </div>
+</a>
+
+<style>
+  .card { display: flex; flex-direction: column; border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; text-decoration: none; color: var(--ink); background: var(--paper); transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
+  .card:hover { border-color: var(--accent); box-shadow: 0 10px 30px rgb(31 79 216 / 0.12); transform: translateY(-3px); color: var(--ink); }
+  .card__media { aspect-ratio: 16 / 9; overflow: hidden; border-bottom: 1px solid var(--rule); background: #f1f5ff; }
+  .card__media :global(img), .card__media :global(svg) { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+  .card:hover .card__media :global(img), .card:hover .card__media :global(svg) { transform: scale(1.03); }
+  .card__body { display: flex; flex-direction: column; gap: 10px; padding: 20px 22px 22px; flex: 1; }
+  .card__top { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; }
+  .card__title { font-size: 19px; line-height: 1.25; letter-spacing: -0.01em; margin: 0; }
+  .card__sum { margin: 0; font-size: 15px; color: #353a44; }
+  .card__role { margin: 0; font-size: 14px; }
+  .card__stack { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .card__more { margin-top: auto; padding-top: 6px; font-size: 14px; font-weight: 600; color: var(--accent); }
+  .arrow { display: inline-block; transition: transform 0.2s; }
+  .card:hover .arrow { transform: translateX(4px); }
+  @media (prefers-reduced-motion: reduce) { .card:hover { transform: none; } }
+</style>

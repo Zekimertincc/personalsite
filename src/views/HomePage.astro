@@ -1,0 +1,137 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import HeroCanvas from '../components/HeroCanvas.astro';
+import { getWork, href, t } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+import { experience, education, spokenLanguages } from '../data/cv';
+import { skills } from '../data/skills';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const tr = t(lang);
+const work = await getWork(lang);
+const featured = work.filter((e) => e.data.kind === 'dev' && e.data.featured).slice(0, 3);
+const art = work.filter((e) => e.data.kind !== 'dev' && e.data.cover).slice(0, 4);
+---
+
+<Base lang={lang}>
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero__text">
+        <span class="pill" data-anim>{tr('home.available')}</span>
+        <h1 class="h1" data-anim>Zeki Inceoglu</h1>
+        <p class="hero__role" data-anim>{tr('home.role')}</p>
+        <p class="hero__bio" data-anim>{tr('home.bio')}</p>
+        <div class="hero__actions" data-anim>
+          <a class="btn btn--primary" href="/cv/zeki-inceoglu-cv.pdf">{tr('home.cv')}</a>
+          <a class="btn" href="https://github.com/Zekimertincc">GitHub</a>
+          <a class="btn" href="https://linkedin.com/in/zeki-mert-i-b6435a20a">LinkedIn</a>
+          <a class="btn" href={href(lang, '/contact/')}>{tr('nav.contact')}</a>
+        </div>
+      </div>
+      <div class="hero__visual" data-anim><HeroCanvas /></div>
+    </section>
+
+    <section class="section">
+      <div class="section__head">
+        <h2 class="h2">{tr('home.featured')}</h2>
+        <a href={href(lang, '/projects/')} class="more">{tr('home.allProjects')} →</a>
+      </div>
+      <div class="grid" data-reveal-group>{featured.map((e) => <ProjectCard lang={lang} entry={e} />)}</div>
+    </section>
+
+    <section class="section two" data-reveal>
+      <div>
+        <h2 class="h2 mb">{tr('home.experience')}</h2>
+        <ol class="timeline">
+          {experience.map((x) => (
+            <li>
+              <span class="mono muted when">{x.when}</span>
+              <div>
+                <strong>{x.title[lang]}</strong>
+                <div class="muted">{x.place}</div>
+                {x.text && <p>{x.text[lang]}</p>}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div>
+        <h2 class="h2 mb">{tr('home.education')}</h2>
+        <ol class="timeline">
+          {education.map((x) => (
+            <li>
+              <span class="mono muted when">{x.when}</span>
+              <div>
+                <strong>{x.title[lang]}</strong>
+                <div class="muted">{x.place}</div>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <h3 class="sub">{tr('home.languages')}</h3>
+        <p class="muted small">{spokenLanguages[lang]}</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section__head">
+        <h2 class="h2">{tr('home.skills')}</h2>
+        <a href={href(lang, '/about/')} class="more">{tr('nav.about')} →</a>
+      </div>
+      <dl class="skills" data-reveal-group>
+        {skills.map((g) => (
+          <div>
+            <dt class="eyebrow">{g.group}</dt>
+            <dd>{g.items.map(([k]) => <span class="tag">{k}</span>)}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <section class="section">
+      <a class="art" data-reveal href={href(lang, '/art/')}>
+        <div class="art__text">
+          <span class="eyebrow">{tr('home.artTitle')}</span>
+          <p>{tr('home.artText')}</p>
+          <span class="more">{tr('home.artLink')} →</span>
+        </div>
+        <div class="art__thumbs">
+          {art.map((e) => <Image src={e.data.cover!} alt={e.data.coverAlt ?? e.data.title} widths={[160, 320]} sizes="160px" />)}
+        </div>
+      </a>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .hero { padding: 48px 0 72px; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 56px; align-items: center; }
+  .hero__text { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+  @media (max-width: 900px) { .hero { grid-template-columns: 1fr; gap: 32px; padding-top: 24px; } }
+  .hero__role { margin: 0; font-size: 20px; font-weight: 500; color: var(--muted); }
+  .hero__bio { margin: 0; max-width: 640px; font-size: 18px; }
+  .hero__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+  .more { font-size: 15px; font-weight: 600; color: var(--accent); text-decoration: none; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 20px; }
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr)); gap: 48px; }
+  .mb { margin-bottom: 20px; }
+  .timeline { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 20px; }
+  .timeline li { display: grid; grid-template-columns: 150px 1fr; gap: 16px; }
+  .timeline p { margin: 6px 0 0; font-size: 15px; }
+  .when { font-size: 13px; padding-top: 3px; }
+  @media (max-width: 520px) { .timeline li { grid-template-columns: 1fr; gap: 2px; } }
+  .sub { font-size: 15px; margin: 28px 0 4px; }
+  .small { font-size: 15px; margin: 0; }
+  .skills { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 24px 32px; margin: 0; }
+  .skills dd { margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .art { transition: background 0.2s; }
+  .art:hover { background: #eef3ff; }
+  .art { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; padding: 24px; background: var(--surface); border-radius: 12px; text-decoration: none; color: var(--ink); }
+  .art:hover { color: var(--ink); }
+  .art__text { flex: 1 1 260px; }
+  .art__text p { margin: 8px 0 12px; font-size: 17px; }
+  .art__thumbs { display: flex; flex-wrap: wrap; gap: 10px; }
+  .art__thumbs :global(img) { width: clamp(60px, 18vw, 88px); height: clamp(60px, 18vw, 88px); object-fit: cover; border-radius: 6px; }
+</style>

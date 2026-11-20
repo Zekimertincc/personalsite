@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import { t } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+import { skills } from '../data/skills';
+import { spokenLanguages } from '../data/cv';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const tr = t(lang);
+---
+<Base lang={lang} title={tr('nav.about')}>
+  <div class="wrap">
+    <header class="head">
+      <h1 class="h1">{tr('nav.about')}</h1>
+      <p class="bio">{tr('home.bio')}</p>
+      <p class="muted">{spokenLanguages[lang]}</p>
+      <a class="btn btn--primary" href="/cv/zeki-inceoglu-cv.pdf">{tr('home.cv')}</a>
+    </header>
+    <section class="section">
+      <h2 class="h2 mb">{tr('home.skills')}</h2>
+      <div class="skills">
+        {skills.map((g) => (
+          <section>
+            <h3 class="eyebrow">{g.group}</h3>
+            <dl>{g.items.map(([k, v]) => (<div><dt>{k}</dt><dd class="muted">{v}</dd></div>))}</dl>
+          </section>
+        ))}
+      </div>
+    </section>
+  </div>
+</Base>
+<style>
+  .head { padding: 40px 0 48px; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+  .bio { max-width: 680px; font-size: 19px; margin: 0; }
+  .head .muted { margin: 0; }
+  .mb { margin-bottom: 28px; }
+  .skills { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(420px, 100%), 1fr)); gap: 36px 48px; }
+  h3 { margin: 0 0 8px; }
+  dl { margin: 0; }
+  dl > div { padding: 12px 0; border-bottom: 1px solid var(--rule); }
+  dt { font-weight: 600; }
+  dd { margin: 4px 0 0; font-size: 15px; }
+</style>

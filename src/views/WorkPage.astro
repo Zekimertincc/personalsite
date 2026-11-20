@@ -1,0 +1,96 @@
+---
+import { Image, getImage } from 'astro:assets';
+import { render, type CollectionEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import SketchStage from '../components/islands/SketchStage';
+import { getWork, href, t, workSlug } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props { lang: Lang; entry: CollectionEntry<'work'> }
+const { lang, entry } = Astro.props;
+const tr = t(lang);
+const d = entry.data;
+const { Content } = await render(entry);
+const isArt = d.kind !== 'dev';
+
+// Next item stays in the same group: dev → dev, art → art.
+const group = (await getWork(lang)).filter((e) => (e.data.kind !== 'dev') === isArt);
+const i = group.findIndex((e) => e.id === entry.id);
+const next = group[(i + 1) % group.length];
+const back = isArt ? { to: '/art/', label: tr('nav.art') } : { to: '/projects/', label: tr('nav.projects') };
+const poster = d.sketch && d.cover ? (await getImage({ src: d.cover, width: 1600 })).src : null;
+---
+
+<Base lang={lang} title={d.title} description={d.summary}>
+  <article class="wrap">
+    <nav aria-label="Breadcrumb" class="crumbs">
+      <a href={href(lang, back.to)}>← {back.label}</a>
+    </nav>
+
+    <header class="head">
+      {d.status === 'in-progress' && <span class="badge" data-status="in-progress">{tr('work.wip')}</span>}
+      <h1 class={isArt ? 'serif art-title' : 'h1'}>{isArt ? <i>{d.title}</i> : d.title}</h1>
+      <p class="summary">{d.summary}</p>
+    </header>
+
+    {
+      (d.context || d.team || d.role || d.links.length > 0) && (
+        <dl class="meta">
+          {d.context && <div><dt>{tr('work.context')}</dt><dd>{d.context} · {d.year}</dd></div>}
+          {d.team && <div><dt>{tr('work.team')}</dt><dd>{d.team}</dd></div>}
+          {d.role && <div><dt>{tr('work.role')}</dt><dd>{d.role}</dd></div>}
+          {d.links.length > 0 && (
+            <div><dt>{tr('work.links')}</dt><dd class="links">{d.links.map((l) => <a href={l.href}>{l.label} ↗</a>)}</dd></div>
+          )}
+        </dl>
+      )
+    }
+    {d.stack.length > 0 && <div class="stack">{d.stack.map((s) => <span class="tag">{s}</span>)}</div>}
+
+    {
+      poster && d.sketch && (
+        <div class="media ink-frame" style="--ink-color: var(--red); --ink-w: 46%; --ink-h: 60%">
+          <SketchStage client:visible sketch={d.sketch} poster={poster} alt={d.coverAlt ?? d.title}
+            labels={{ run: tr('sketch.run'), loading: tr('sketch.loading'), pause: tr('sketch.pause'), reseed: tr('sketch.reseed'), full: tr('sketch.full'), still: tr('sketch.still'), runAnyway: tr('sketch.runAnyway') }} />
+        </div>
+      )
+    }
+    {
+      !d.sketch && d.cover && (
+        <div class={isArt ? 'media cover ink-frame' : 'media cover plain'} style="--ink-color: var(--yellow)">
+          <Image src={d.cover} alt={d.coverAlt ?? d.title} widths={[640, 1280]} sizes="(min-width: 1000px) 900px, 100vw" />
+        </div>
+      )
+    }
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <nav class="pager">
+      <a href={href(lang, back.to)}>← {back.label}</a>
+      {next && next.id !== entry.id && <a href={href(lang, `/work/${workSlug(next)}/`)}>{next.data.title} →</a>}
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .crumbs { font-size: 14px; padding-top: 16px; }
+  .crumbs a { text-decoration: none; color: var(--muted); }
+  .head { padding: 24px 0 28px; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+  .art-title { font-size: clamp(48px, 7vw, 88px); font-weight: 400; line-height: 0.95; margin: 0; }
+  .summary { margin: 0; max-width: 760px; font-size: 19px; line-height: 1.5; color: #353a44; }
+  .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0; margin: 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .meta > div { padding: 14px 16px 14px 0; }
+  .meta dt { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .meta dd { margin: 4px 0 0; font-size: 15px; }
+  .links { display: flex; flex-direction: column; gap: 2px; }
+  .links a { color: var(--accent); text-decoration: none; }
+  .stack { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 18px; }
+  .media { margin-top: 36px; }
+  .cover { max-width: 900px; }
+  .cover :global(img) { width: 100%; height: auto; }
+  .plain :global(img) { border: 1px solid var(--rule); border-radius: 8px; }
+  .pager { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; margin: 80px 0 24px; padding-top: 20px; border-top: 1px solid var(--rule); font-size: 16px; font-weight: 600; }
+  .pager a { text-decoration: none; }
+</style>

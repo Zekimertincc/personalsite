@@ -1,0 +1,34 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { t } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const tr = t(lang);
+const notes = (await getCollection('notes', ({ data }) => import.meta.env.DEV || !data.draft))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+<Base lang={lang} title={tr('notes.title')}>
+  <div class="wrap">
+    <h1 class="spaced title">{tr('notes.title')}</h1>
+    {notes.length === 0 && <p class="muted">{tr('notes.empty')}</p>}
+    <ul class="list">
+      {notes.map((n) => (
+        <li>
+          <a href={`/notes/${n.id.split('/').slice(1).join('/')}/`}>
+            <span class="mono muted">{n.data.date.toISOString().slice(0, 10)}</span>
+            <span class="serif t">{n.data.title}</span>
+            <span class="muted">{n.data.summary}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Base>
+<style>
+  .title { font-size: 32px; margin: 32px 0; }
+  .list { list-style: none; padding: 0; margin: 0 0 96px; }
+  .list a { display: flex; flex-wrap: wrap; gap: 4px 24px; align-items: baseline; padding: 16px 0; border-top: 1px solid var(--rule); text-decoration: none; }
+  .t { font-size: 28px; flex: 1 1 300px; }
+</style>

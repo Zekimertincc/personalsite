@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import RadioBar from '../components/islands/RadioBar';
+import { now, next } from '../data/radio';
+import { href, t } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const tr = t(lang);
+---
+<Base lang={lang} title={tr('nav.radio')}>
+  <div class="wrap">
+    <p class="crumbs"><a href={href(lang, '/art/')}>← {tr('nav.art')}</a></p>
+    <h1 class="serif title"><i>{tr('nav.radio')}</i></h1>
+    <RadioBar client:load title={now.title} code={now.kind === 'strudel' ? now.code : now.title}
+      labels={{ onair: tr('radio.onair'), offline: tr('radio.offline'), here: tr('radio.here'), tune: tr('radio.tune'), stop: tr('radio.stop') }} />
+    <div class="ink-frame panelwrap" style="--ink-color: var(--yellow); --ink-w: 60%; --ink-h: 70%">
+      <div class="panel mono">
+        <strong>// now playing — {now.title}</strong>
+        {now.kind === 'strudel' && <pre>{now.code}</pre>}
+        {next.length > 0 && <><strong>up next</strong><ol>{next.map((n) => <li>{n}</li>)}</ol></>}
+      </div>
+    </div>
+  </div>
+</Base>
+<style>
+  .crumbs { font-size: 14px; padding-top: 16px; }
+  .crumbs a { text-decoration: none; color: var(--muted); }
+  .title { font-size: clamp(56px, 8vw, 96px); font-weight: 400; margin: 16px 0 28px; }
+  .panelwrap { margin: 32px 0 64px; }
+  .panel { background: var(--blue); padding: 32px; font-size: 15px; }
+  .panel pre { white-space: pre-wrap; font-size: clamp(14px, 1.4vw, 17px); line-height: 1.6; }
+</style>

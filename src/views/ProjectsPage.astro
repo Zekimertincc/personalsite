@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import Archive from '../components/Archive.astro';
+import { getWork, t } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const tr = t(lang);
+const dev = (await getWork(lang)).filter((e) => e.data.kind === 'dev');
+---
+<Base lang={lang} title={tr('projects.title')}>
+  <div class="wrap">
+    <header class="head">
+      <h1 class="h1">{tr('projects.title')}</h1>
+      <p class="muted">{tr('projects.intro')}</p>
+    </header>
+    <Archive lang={lang} entries={dev} />
+  </div>
+</Base>
+<style>
+  .head { padding: 40px 0 32px; }
+  .head p { font-size: 18px; margin: 12px 0 0; }
+</style>

@@ -1,0 +1,134 @@
+/* Clean, professional base. The three inks (yellow, blue, red) live on the artwork pages only. */
+:root {
+  --paper: #ffffff;
+  --surface: #f6f7f9;
+  --ink: #111418;
+  --muted: #5b6270;
+  --rule: #e4e7ec;
+  --accent: #1f4fd8;
+  --accent-ink: #ffffff;
+  --accent-soft: #eef3ff;
+
+  --yellow: #f2e94e;
+  --blue: #5aa9e6;
+  --red: #ee5a4f;
+
+  --sans: 'Inter', system-ui, sans-serif;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --gutter: clamp(16px, 3vw, 32px);
+  --max: 1120px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+}
+img, video { max-width: 100%; height: auto; display: block; }
+a { color: inherit; text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+.mono { font-family: var(--mono); }
+.serif { font-family: var(--serif); }
+.muted { color: var(--muted); }
+
+.h1 { font-size: clamp(40px, 6vw, 64px); line-height: 1.05; letter-spacing: -0.03em; font-weight: 700; margin: 0; }
+.h2 { font-size: 24px; line-height: 1.2; letter-spacing: -0.01em; font-weight: 700; margin: 0; }
+.eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+.section { padding: 64px 0; border-top: 1px solid var(--rule); }
+.section__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 28px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 44px; padding: 0 18px;
+  font: inherit; font-size: 15px; font-weight: 600;
+  border: 1px solid var(--rule); border-radius: 8px;
+  background: var(--paper); color: var(--ink);
+  text-decoration: none; cursor: pointer;
+}
+.btn:hover { border-color: var(--ink); color: var(--ink); }
+.btn--primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn--primary:hover { background: #1a43b8; border-color: #1a43b8; color: var(--accent-ink); }
+
+.chip {
+  font: inherit; font-size: 14px;
+  min-height: 40px; padding: 0 14px;
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid var(--rule); border-radius: 999px;
+  background: var(--paper); color: var(--ink); cursor: pointer;
+}
+.chip[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+.tag {
+  font-family: var(--mono); font-size: 12.5px;
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 6px;
+  padding: 3px 8px; white-space: nowrap;
+}
+.badge {
+  font-size: 12px; font-weight: 600;
+  border-radius: 999px; padding: 3px 10px;
+  background: var(--surface); color: var(--muted); white-space: nowrap;
+}
+.badge[data-status='live'] { background: #e7f6ec; color: #166534; }
+.badge[data-status='in-progress'] { background: var(--accent-soft); color: var(--accent); }
+
+.pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 500;
+  background: var(--accent-soft); color: var(--accent);
+  border-radius: 999px; padding: 6px 14px;
+}
+.pill::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #16a34a; }
+
+.prose { max-width: 760px; font-size: 17px; line-height: 1.65; }
+.prose h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin: 56px 0 16px; }
+.prose code { font-family: var(--mono); font-size: 0.88em; background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; padding: 1px 5px; }
+.prose li { margin: 6px 0; }
+
+/* Artwork pages: misregistered ink layer behind an image. */
+.ink-frame { position: relative; padding: 14px 14px 0 0; }
+.ink-frame::before { content: ''; position: absolute; top: 0; right: 0; width: var(--ink-w, 70%); height: var(--ink-h, 75%); background: var(--ink-color, var(--blue)); }
+.ink-frame > * { position: relative; }
+.ink-frame img, .ink-frame video { width: 100%; }
+.ink-frame--left { padding: 14px 0 0 14px; }
+.ink-frame--left::before { right: auto; left: 0; }
+
+/* Radio bar (radio page only for now) */
+.radio-bar { background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 13px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px; padding: 10px 16px; border-radius: 8px; }
+.radio-bar__live { display: flex; align-items: center; gap: 8px; }
+.radio-bar__dot { width: 9px; height: 9px; border-radius: 50%; background: #777; }
+.radio-bar__dot[data-on='true'] { background: var(--red); }
+.radio-bar__now { flex: 1 1 280px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.radio-bar__btn { font: inherit; background: var(--yellow); color: var(--ink); border: 0; padding: 0 14px; min-height: 36px; cursor: pointer; }
+
+/* Sketch stage */
+.stage { position: relative; background: var(--ink); aspect-ratio: 16 / 10; max-height: 82vh; width: 100%; overflow: hidden; }
+.stage__poster, .stage__canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.stage[data-state='poster'] .stage__poster, .stage[data-state='loading'] .stage__poster { filter: grayscale(1); opacity: 0.55; }
+.stage__overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--paper); }
+.stage__run { font-family: var(--mono); font-size: 16px; font-weight: 700; background: var(--yellow); color: var(--ink); border: 0; padding: 0 26px; min-height: 56px; cursor: pointer; }
+.stage__controls { position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; background: rgb(20 20 20 / 0.82); }
+.stage__controls button { font-family: var(--mono); font-size: 14px; background: transparent; color: var(--paper); border: 1.5px solid var(--paper); padding: 0 16px; min-height: 44px; cursor: pointer; }
+.stage__note { position: absolute; left: 16px; bottom: 16px; margin: 0; max-width: 420px; background: var(--paper); padding: 14px 16px; font-size: 14px; }
+.linklike { font: inherit; background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; color: inherit; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* Motion: hero items wait for anime.js (see Motion.astro); the safety net shows them after 2.5 s. */
+.motion [data-anim] { opacity: 0; }
+.motion-ready [data-anim] { opacity: 1; }
+
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgb(22 163 74 / 0.45); } 50% { box-shadow: 0 0 0 6px rgb(22 163 74 / 0); } }
+.pill::before { animation: pulse 2.4s ease-in-out infinite; }

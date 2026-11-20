@@ -1,0 +1,48 @@
+---
+title: Real-time tournament platform
+summary: An inter-IUT tournament platform. Teams form, captains accept members, the bracket advances match by match, and every screen updates without a reload.
+kind: dev
+year: 2026
+order: 10
+status: in-progress
+context: SAE S5 · R5.A.05, sujet B
+team: Pair project
+role: The whole back-end, then finished the front-end
+stack: [Express 5, TypeScript, Socket.io, SQLite · hand-written SQL, JWT · bcrypt, Jest · Supertest, Swagger, React · TanStack Query]
+links:
+  - { label: API repo, href: "https://github.com/DUT-Info-Montreuil/R5A5_2026_SUJETB_INCEOGLU_HANOUNE_BACK" }
+  - { label: Front repo, href: "https://github.com/DUT-Info-Montreuil/R5A5_2026_SUJETB_INCEOGLU_HANOUNE_FRONT" }
+featured: true
+illustration: bracket
+---
+
+## Architecture
+
+Every write goes through the REST API and its access checks. Socket.io only broadcasts what just happened, in rooms per tournament, team and user, so there is a single door to secure. The same JWT authenticates both channels, and API and real-time share one port.
+
+Routes do access checks, then validation, then call a service. Services hold the bracket and match rules. SQLite sits behind one repository per table, with foreign keys on and an in-memory database per test file.
+
+## Decisions
+
+Five written decision records in the repo:
+
+1. **Logging** — Winston over Pino: JSON lines, console plus a daily file kept 14 days, `warn` for every refusal.
+2. **Bracket and forfeit rules** — how the tree is built and what a forfeit does.
+3. **PostgreSQL → SQLite** — we started on PostgreSQL and switched once we measured the install and rewrite cost. SQLite keeps foreign keys and transactions and runs from `npm install` alone.
+4. **Real-time** — Socket.io rooms; writes stay in REST, sockets only broadcast.
+5. **Auth** — a JWT carrying only id and role, bcrypt hashing, 401/403 middleware, and a refusal test for every access rule.
+
+**144 tests** (Jest + Supertest) check every access rule and that nothing changed after a refusal.
+
+## How it was built
+
+Agent-assisted development, documented in a [public report](https://github.com/DUT-Info-Montreuil/R5A5_2026_SUJETB_INCEOGLU_HANOUNE_BACK/blob/main/docs/ia/rapport-ia.md). Claude Code wrote most of the delivered code. I designed the system, split the work into tasks, wrote the prompts and reviewed every diff. Nothing was committed without a human review.
+
+- **CLAUDE.md** in each repo: conventions, the 19 requirements, a refusal test for every access rule, never commit alone.
+- **A read-only `reviewer` sub-agent** checks every diff before commit: access holes, gaps with the brief, missing refusal tests, secrets in logs.
+- **Two parallel sessions**, one on the API and one on the front, steered partly from my phone during the day, diffs reviewed in the evening.
+- **Every task ends the same way:** `npm test` → `tsc` → reviewer → fix what holds up → `git diff --stat` → stop and wait for me.
+
+**A bug one session found in the other's code.** While testing the referee screens, the front session noticed that after a double forfeit the API still accepted a result: an eliminated team could come back. The back's tests were green because they tested what the agent had thought of. Fix: 409 on results and forfeits for eliminated teams, plus tests that the bracket doesn't move.
+
+**What it cost:** review time on long diffs, vigilance about tests that pass but miss things, and hands-on coding practice, which I keep up on the side.

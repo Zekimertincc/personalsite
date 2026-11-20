@@ -1,0 +1,60 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import Nav from '../components/Nav.astro';
+import Motion from '../components/Motion.astro';
+import { t } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+import '../styles/global.css';
+
+interface Props {
+  lang: Lang;
+  title?: string;
+  description?: string;
+}
+const { lang, title, description } = Astro.props;
+const tr = t(lang);
+const fullTitle = title ? `${title} — Zeki Inceoglu` : 'Zeki Inceoglu — Full-stack developer';
+const desc = description ?? tr('home.bio');
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={desc} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    />
+    <ClientRouter />
+    <Motion />
+  </head>
+  <body>
+    <div class="wrap">
+      <Nav lang={lang} />
+    </div>
+    <main>
+      <slot />
+    </main>
+    <footer class="wrap"><div class="footer">
+      <span>© {year} Zeki Inceoglu</span>
+      <span class="footer__links">
+        <a href="https://github.com/Zekimertincc">GitHub</a>
+        <a href="https://linkedin.com/in/zeki-mert-i-b6435a20a">LinkedIn</a>
+        <a href="/cv/zeki-inceoglu-cv.pdf">CV</a>
+      </span>
+    </div></footer>
+  </body>
+</html>
+
+<style>
+  .footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-top: 32px; padding-bottom: 48px; border-top: 1px solid var(--rule); margin-top: 32px; font-size: 14px; color: var(--muted); }
+  .footer__links { display: flex; gap: 20px; }
+  .footer a { text-decoration: none; }
+</style>

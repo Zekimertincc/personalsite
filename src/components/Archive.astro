@@ -1,0 +1,38 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { href, t, workSlug } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props { lang: Lang; entries: CollectionEntry<'work'>[] }
+const { lang, entries } = Astro.props;
+const tr = t(lang);
+---
+
+<ul class="list">
+  {
+    entries.map((e) => (
+      <li>
+        <a class="row" href={href(lang, `/work/${workSlug(e)}/`)}>
+          <span class="row__year mono muted">{e.data.year}</span>
+          <span class="row__main">
+            <span class="row__title">{e.data.title}</span>
+            <span class="row__meta muted">{[e.data.context, e.data.role].filter(Boolean).join(' · ')}</span>
+          </span>
+          <span class="row__stack">{e.data.stack.slice(0, 4).map((s) => <span class="tag">{s}</span>)}</span>
+          {e.data.status && <span class="badge" data-status={e.data.status}>{tr(`status.${e.data.status}`)}</span>}
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; padding: 18px 0; border-bottom: 1px solid var(--rule); text-decoration: none; color: var(--ink); }
+  .row:hover .row__title { color: var(--accent); }
+  .row__year { flex: 0 0 48px; font-size: 13px; }
+  .row__main { flex: 999 1 320px; display: flex; flex-direction: column; gap: 2px; }
+  .row__title { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+  .row__meta { font-size: 14px; }
+  .row__stack { flex: 1 1 280px; display: flex; flex-wrap: wrap; gap: 6px; }
+</style>

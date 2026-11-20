@@ -1,0 +1,49 @@
+---
+/**
+ * Small entrance animations with anime.js:
+ *  [data-anim]          hero items, staggered on page load
+ *  [data-reveal]        a block that fades up when it scrolls into view
+ *  [data-reveal-group]  its children fade up one after another
+ * Nothing moves with reduced motion. Without JS everything is simply visible.
+ */
+---
+<script is:inline>
+  (function () {
+    var d = document.documentElement;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function mark() { if (!reduce) d.classList.add('motion'); }
+    mark();
+    document.addEventListener('astro:after-swap', mark);
+    // Safety net: if the animation script never runs, show everything anyway.
+    setTimeout(function () { d.classList.add('motion-ready'); }, 2500);
+  })();
+</script>
+
+<script>
+  import { animate, stagger } from 'animejs';
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let io: IntersectionObserver | null = null;
+
+  function run() {
+    io?.disconnect();
+    if (reduce) return;
+
+    const hero = document.querySelectorAll<HTMLElement>('[data-anim]');
+    if (hero.length) {
+      animate(hero, { opacity: [0, 1], translateY: [18, 0], duration: 800, delay: stagger(90), ease: 'outQuart' });
+    }
+
+    const blocks = [...document.querySelectorAll<HTMLElement>('[data-reveal], [data-reveal-group] > *')];
+    blocks.forEach((el) => { el.style.opacity = '0'; });
+    io = new IntersectionObserver((entries) => {
+      const shown = entries.filter((e) => e.isIntersecting).map((e) => e.target as HTMLElement);
+      if (!shown.length) return;
+      shown.forEach((el) => io!.unobserve(el));
+      animate(shown, { opacity: [0, 1], translateY: [24, 0], duration: 700, delay: stagger(80), ease: 'outQuart' });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    blocks.forEach((el) => io!.observe(el));
+  }
+
+  document.addEventListener('astro:page-load', run);
+</script>

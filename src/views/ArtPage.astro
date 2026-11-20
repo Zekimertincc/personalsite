@@ -1,0 +1,53 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { getWork, href, t, workSlug } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const tr = t(lang);
+const art = (await getWork(lang)).filter((e) => e.data.kind !== 'dev');
+const withCover = art.filter((e) => e.data.cover);
+const without = art.filter((e) => !e.data.cover);
+const inks = ['var(--yellow)', 'var(--red)', 'var(--blue)'];
+---
+<Base lang={lang} title={tr('art.title')}>
+  <div class="wrap">
+    <header class="head">
+      <h1 class="serif title"><i>{tr('art.title')}</i></h1>
+      <p>{tr('art.intro')}</p>
+    </header>
+    <div class="grid">
+      {withCover.map((e, i) => (
+        <a href={href(lang, `/work/${workSlug(e)}/`)} class="item">
+          <div class={`ink-frame ${i % 2 ? 'ink-frame--left' : ''}`} style={`--ink-color: ${inks[i % 3]}`}>
+            <Image src={e.data.cover!} alt={e.data.coverAlt ?? e.data.title} widths={[360, 720]} sizes="(min-width: 900px) 340px, 100vw" />
+          </div>
+          <span class="serif name"><i>{e.data.title}</i>, {e.data.year}</span>
+          <span class="muted medium">{e.data.stack.length ? e.data.stack.join(', ') : tr(`kind.${e.data.kind}`)}</span>
+        </a>
+      ))}
+    </div>
+    {without.length > 0 && (
+      <ul class="others">
+        {without.map((e) => (
+          <li><a href={href(lang, `/work/${workSlug(e)}/`)}><span class="serif name"><i>{e.data.title}</i></span> <span class="muted">— {e.data.summary}</span></a></li>
+        ))}
+        <li><a href={href(lang, '/radio/')} class="radio">{tr('art.radio')} →</a></li>
+      </ul>
+    )}
+  </div>
+</Base>
+<style>
+  .head { padding: 40px 0 40px; max-width: 720px; }
+  .title { font-size: clamp(56px, 8vw, 96px); font-weight: 400; line-height: 0.95; margin: 0; }
+  .head p { font-size: 18px; margin: 16px 0 0; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 36px 28px; }
+  .item { display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: var(--ink); }
+  .item :global(img) { width: 100%; aspect-ratio: 1; object-fit: cover; }
+  .name { font-size: 22px; line-height: 1.1; }
+  .medium { font-size: 13px; }
+  .others { list-style: none; padding: 32px 0 0; margin: 48px 0 0; border-top: 1px solid var(--rule); display: flex; flex-direction: column; gap: 12px; }
+  .others a { text-decoration: none; }
+  .radio { font-weight: 600; color: var(--accent); }
+</style>

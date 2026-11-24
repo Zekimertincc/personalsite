@@ -13,7 +13,7 @@ interface Props {
 }
 const { lang, title, description } = Astro.props;
 const tr = t(lang);
-const fullTitle = title ? `${title} — Zeki Inceoglu` : 'Zeki Inceoglu — Full-stack developer';
+const fullTitle = title ? `${title} — Zeki Inceoglu` : `Zeki Inceoglu — ${tr('meta.role')}`;
 const desc = description ?? tr('home.bio');
 const year = new Date().getFullYear();
 ---

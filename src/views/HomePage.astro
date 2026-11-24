@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import HeroCanvas from '../components/HeroCanvas.astro';
+import TechGrid from '../components/TechGrid.astro';
 import { getWork, href, t } from '../i18n/utils';
 import type { Lang } from '../i18n/ui';
 import { experience, education, spokenLanguages } from '../data/cv';
@@ -12,7 +13,7 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const tr = t(lang);
 const work = await getWork(lang);
-const featured = work.filter((e) => e.data.kind === 'dev' && e.data.featured).slice(0, 3);
+const featured = work.filter((e) => e.data.kind === 'dev' && e.data.featured).slice(0, 4);
 const art = work.filter((e) => e.data.kind !== 'dev' && e.data.cover).slice(0, 4);
 ---
 
@@ -31,7 +32,7 @@ const art = work.filter((e) => e.data.kind !== 'dev' && e.data.cover).slice(0, 4
           <a class="btn" href={href(lang, '/contact/')}>{tr('nav.contact')}</a>
         </div>
       </div>
-      <div class="hero__visual" data-anim><HeroCanvas /></div>
+      <div class="hero__visual" data-anim><HeroCanvas lang={lang} /></div>
     </section>
 
     <section class="section">
@@ -78,17 +79,18 @@ const art = work.filter((e) => e.data.kind !== 'dev' && e.data.cover).slice(0, 4
 
     <section class="section">
       <div class="section__head">
-        <h2 class="h2">{tr('home.skills')}</h2>
-        <a href={href(lang, '/about/')} class="more">{tr('nav.about')} →</a>
+        <div>
+          <h2 class="h2">{tr('tech.title')}</h2>
+          <p class="muted lead">{tr('tech.intro')}</p>
+        </div>
       </div>
-      <dl class="skills" data-reveal-group>
-        {skills.map((g) => (
-          <div>
-            <dt class="eyebrow">{g.group}</dt>
-            <dd>{g.items.map(([k]) => <span class="tag">{k}</span>)}</dd>
-          </div>
+      <TechGrid lang={lang} />
+      <h3 class="eyebrow method-title">{tr('tech.method')}</h3>
+      <div class="method" data-reveal-group>
+        {skills[lang][0].items.map(([k, v]) => (
+          <div class="method__item"><strong>{k}</strong><p class="muted">{v}</p></div>
         ))}
-      </dl>
+      </div>
     </section>
 
     <section class="section">
@@ -124,6 +126,11 @@ const art = work.filter((e) => e.data.kind !== 'dev' && e.data.cover).slice(0, 4
   @media (max-width: 520px) { .timeline li { grid-template-columns: 1fr; gap: 2px; } }
   .sub { font-size: 15px; margin: 28px 0 4px; }
   .small { font-size: 15px; margin: 0; }
+  .lead { margin: 8px 0 0; font-size: 16px; }
+  .method-title { margin: 48px 0 14px; }
+  .method { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 16px; }
+  .method__item { padding: 18px 20px; border-radius: 12px; background: var(--surface); }
+  .method__item p { margin: 6px 0 0; font-size: 14.5px; }
   .skills { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 24px 32px; margin: 0; }
   .skills dd { margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
   .art { transition: background 0.2s; }

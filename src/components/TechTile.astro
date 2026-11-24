@@ -1,0 +1,26 @@
+---
+import type { Tech } from '../data/tech';
+interface Props { tech: Tech }
+const { tech } = Astro.props;
+---
+<div class="tile" style={tech.icon ? `--brand: #${tech.icon.hex}` : undefined}>
+  <span class="tile__icon" aria-hidden="true">
+    {tech.icon ? (
+      <svg viewBox="0 0 24 24" width="20" height="20"><path d={tech.icon.path} /></svg>
+    ) : (
+      <span class="tile__text">{tech.text}</span>
+    )}
+  </span>
+  <span class="tile__name">{tech.name}</span>
+</div>
+
+<style>
+  .tile { display: flex; align-items: center; gap: 12px; padding: 10px 14px 10px 10px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); transition: border-color 0.2s, box-shadow 0.2s; }
+  .tile__icon { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); }
+  .tile__icon svg { fill: #8a909c; transition: fill 0.2s; }
+  .tile__text { font-family: var(--mono); font-size: 11px; font-weight: 700; color: #8a909c; transition: color 0.2s; }
+  .tile__name { font-size: 15px; font-weight: 500; }
+  .tile:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgb(31 79 216 / 0.08); }
+  .tile:hover .tile__icon svg { fill: var(--brand, var(--ink)); }
+  .tile:hover .tile__text { color: var(--accent); }
+</style>

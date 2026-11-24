@@ -19,7 +19,7 @@ const tr = t(lang);
     <section class="section">
       <h2 class="h2 mb">{tr('home.skills')}</h2>
       <div class="skills">
-        {skills.map((g) => (
+        {skills[lang].map((g) => (
           <section>
             <h3 class="eyebrow">{g.group}</h3>
             <dl>{g.items.map(([k, v]) => (<div><dt>{k}</dt><dd class="muted">{v}</dd></div>))}</dl>

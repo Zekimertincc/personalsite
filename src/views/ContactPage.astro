@@ -18,18 +18,41 @@ const tr = t(lang);
           <a href="https://github.com/Zekimertincc">GitHub ↗</a>
         </p>
       </header>
-      {/* TODO (v1.1): post to an Astro Action + Resend (needs an adapter). Until then the form opens the mail app. */}
-      <form class="form" action="mailto:zekimertinc@gmail.com" method="post" enctype="text/plain">
+      {/* The form opens the visitor's mail app with the message filled in. TODO: real sending (Web3Forms or an Astro Action + Resend). */}
+      <form class="form" data-contact>
         <div class="row">
           <label>{tr('contact.name')}<input name="name" type="text" autocomplete="name" required /></label>
           <label>{tr('contact.email')}<input name="email" type="email" autocomplete="email" required /></label>
         </div>
         <label>{tr('contact.message')}<textarea name="message" rows="6" required></textarea></label>
-        <button type="submit" class="btn btn--primary">{tr('contact.send')}</button>
+        <div class="actions">
+          <button type="submit" class="btn btn--primary">{tr('contact.send')}</button>
+          <button type="button" class="btn" data-copy>{tr('contact.copy')}</button>
+          <span class="muted note" data-note aria-live="polite"></span>
+        </div>
       </form>
     </div>
   </div>
 </Base>
+<script>
+  const TO = 'zekimertinc@gmail.com';
+  function setup() {
+    const form = document.querySelector<HTMLFormElement>('[data-contact]');
+    if (!form) return;
+    const note = form.querySelector<HTMLElement>('[data-note]')!;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const d = new FormData(form);
+      const subject = `Portfolio — ${d.get('name')}`;
+      const body = `${d.get('message')}\n\n— ${d.get('name')} (${d.get('email')})`;
+      window.location.href = `mailto:${TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    });
+    form.querySelector('[data-copy]')?.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(TO); note.textContent = '✓ ' + TO; } catch { note.textContent = TO; }
+    });
+  }
+  document.addEventListener('astro:page-load', setup);
+</script>
 <style>
   .box { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr)); gap: 48px; padding: 40px 0 64px; }
   header p { font-size: 18px; }
@@ -41,5 +64,6 @@ const tr = t(lang);
   label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600; }
   input, textarea { font: inherit; font-weight: 400; min-height: 44px; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); }
   input:focus, textarea:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
-  .form button { align-self: flex-start; }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .note { font-size: 14px; }
 </style>

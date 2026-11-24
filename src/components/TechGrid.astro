@@ -1,0 +1,30 @@
+---
+import TechTile from './TechTile.astro';
+import { daily, groups } from '../data/tech';
+import { t } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const tr = t(Astro.props.lang);
+---
+<div class="daily" data-reveal>
+  <span class="daily__label">{tr('tech.daily')}</span>
+  <div class="daily__grid">{daily.map((x) => <TechTile tech={x} />)}</div>
+</div>
+<div class="groups" data-reveal-group>
+  {groups.map((g) => (
+    <section>
+      <h3 class="eyebrow">{tr(`tech.${g.id}`)}</h3>
+      <div class="col">{g.items.map((x) => <TechTile tech={x} />)}</div>
+    </section>
+  ))}
+</div>
+
+<style>
+  .daily { border: 1px solid var(--rule); border-radius: 16px; padding: 20px; background: var(--paper); }
+  .daily__label { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  .daily__label::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .daily__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); gap: 12px; }
+  .groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr)); gap: 32px 20px; margin-top: 40px; }
+  .groups h3 { margin: 0 0 14px; }
+  .col { display: flex; flex-direction: column; gap: 10px; }
+</style>

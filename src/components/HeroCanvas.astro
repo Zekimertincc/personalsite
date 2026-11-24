@@ -4,10 +4,14 @@
  * The pointer leaves a glowing trail, a click sends a ripple. Plain canvas, no library.
  * Pauses off-screen; with reduced motion it draws one still frame.
  */
+import { t } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const tr = t(Astro.props.lang);
 ---
 <figure class="hero-canvas" aria-hidden="true">
   <canvas data-hero-canvas></canvas>
-  <figcaption class="mono">generative · hover or tap to disturb</figcaption>
+  <figcaption class="mono">{tr('hero.caption')}</figcaption>
 </figure>
 
 <script>

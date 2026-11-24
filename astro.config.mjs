@@ -8,8 +8,8 @@ export default defineConfig({
   site: 'https://zekimertinceoglu.vercel.app/',
   integrations: [react(), mdx()],
   i18n: {
-    locales: ['en', 'fr', 'tr'],
-    defaultLocale: 'en',
+    locales: ['fr', 'en', 'tr'],
+    defaultLocale: 'fr',
     routing: { prefixDefaultLocale: false },
   },
 });

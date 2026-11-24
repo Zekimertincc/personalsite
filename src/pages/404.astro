@@ -1,9 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
+import { t } from '../i18n/utils';
+const tr = t('fr');
 ---
-<Base lang="en" title="Not found">
+<Base lang="fr" title={tr('404.title')}>
   <div class="wrap" style="padding: 64px 0 128px;">
     <h1 class="display" style="font-size: clamp(64px, 12vw, 180px); margin: 0;">404</h1>
-    <p><a href="/">Back to the index</a></p>
+    <p>{tr('404.title')} — <a href="/">{tr('404.back')}</a></p>
+    <p lang="en" class="muted"><a href="/en/">English version</a></p>
   </div>
 </Base>

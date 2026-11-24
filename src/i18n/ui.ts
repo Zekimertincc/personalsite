@@ -1,6 +1,9 @@
-export const languages = { en: 'EN', fr: 'FR', tr: 'TR' } as const;
+export const languages = { fr: 'FR', en: 'EN', tr: 'TR' } as const;
 export type Lang = keyof typeof languages;
-export const defaultLang: Lang = 'en';
+/** Language served at the root URL. */
+export const defaultLang: Lang = 'fr';
+/** Language every content entry exists in; others fall back to it. */
+export const contentLang: Lang = 'en';
 export const langs = Object.keys(languages) as Lang[];
 
 const en = {
@@ -10,8 +13,11 @@ const en = {
   'nav.notes': 'Notes',
   'nav.about': 'About',
   'nav.contact': 'Contact',
-  'home.role': 'Full-stack developer · AI-assisted engineering · Paris',
-  'home.bio': 'Final-year computer science student at Université Paris 8. I take full-stack apps and internal tools from the design documents (use cases, data models, API specs) to maintainable, tested code. I build with AI coding agents and review every line that ships — one of my tools is used every day by the team where I interned.',
+  'home.role': 'Full-stack developer · Paris',
+  'meta.role': 'Full-stack developer',
+  '404.title': 'Page not found',
+  '404.back': 'Back to the home page',
+  'home.bio': 'Final-year computer science student at Université Paris 8. I take full-stack apps and internal tools from the design documents (use cases, data models, API specs) to maintainable, tested code. One of my tools is used every day by the team where I interned.',
   'home.available': 'Looking for an end-of-studies internship · March–July 2027',
   'home.cv': 'Download CV',
   'home.featured': 'Selected projects',
@@ -25,7 +31,8 @@ const en = {
   'home.artLink': 'See the artwork',
   'home.readMore': 'Read more',
   'projects.title': 'Projects',
-  'projects.intro': 'SAEs, internships and freelance work, newest first.',
+  'projects.intro': 'SAEs and internships, newest first.',
+  'hero.caption': 'generative · hover or tap to disturb',
   'art.title': 'Artwork',
   'art.intro': 'Collages, VJ visuals, generative studies and live-coded music, made alongside my dev work.',
   'art.radio': 'Listen on the radio',
@@ -61,8 +68,18 @@ const en = {
   'contact.email': 'Email',
   'contact.message': 'Message',
   'contact.send': 'Send',
+  'contact.copy': 'Copy my email',
   'notes.title': 'Notes',
   'notes.empty': 'Nothing here yet.',
+  'tech.daily': 'Every day',
+  'tech.languages': 'Languages',
+  'tech.front': 'Front-end',
+  'tech.back': 'Back-end',
+  'tech.data': 'Data & DevOps',
+  'tech.tools': 'Tools',
+  'tech.title': 'Technologies',
+  'tech.intro': 'The tools I use in my projects — hover one to see it in colour.',
+  'tech.method': 'How I work',
 };
 export type UiKey = keyof typeof en;
 
@@ -73,8 +90,11 @@ const fr: Record<UiKey, string> = {
   'nav.notes': 'Notes',
   'nav.about': 'À propos',
   'nav.contact': 'Contact',
-  'home.role': 'Développeur full-stack · ingénierie assistée par IA · Paris',
-  'home.bio': 'Étudiant en 3e année de BUT Informatique à l’Université Paris 8. Je mène des applications full-stack et des outils métier du dossier de conception (cas d’utilisation, modèle de données, spécifications d’API) jusqu’à un code maintenable et testé. Je travaille avec des agents IA de développement et je relis chaque ligne livrée — l’un de mes outils est utilisé chaque jour par l’équipe où j’ai fait mon stage.',
+  'home.role': 'Développeur full-stack · Paris',
+  'meta.role': 'Développeur full-stack',
+  '404.title': 'Page introuvable',
+  '404.back': 'Retour à l’accueil',
+  'home.bio': 'Étudiant en 3e année de BUT Informatique à l’Université Paris 8. Je mène des applications full-stack et des outils métier du dossier de conception (cas d’utilisation, modèle de données, spécifications d’API) jusqu’à un code maintenable et testé. L’un de mes outils est utilisé chaque jour par l’équipe où j’ai fait mon stage.',
   'home.available': 'Je cherche un stage de fin d’études · mars–juillet 2027',
   'home.cv': 'Télécharger le CV',
   'home.featured': 'Projets choisis',
@@ -88,7 +108,8 @@ const fr: Record<UiKey, string> = {
   'home.artLink': 'Voir les œuvres',
   'home.readMore': 'Lire la suite',
   'projects.title': 'Projets',
-  'projects.intro': 'SAÉ, stages et missions freelance, du plus récent au plus ancien.',
+  'projects.intro': 'SAÉ et stages, du plus récent au plus ancien.',
+  'hero.caption': 'génératif · survolez ou touchez pour perturber',
   'art.title': 'Œuvres',
   'art.intro': 'Collages, visuels VJ, études génératives et musique en live coding, réalisés en parallèle de mon travail de développeur.',
   'art.radio': 'Écouter la radio',
@@ -124,8 +145,18 @@ const fr: Record<UiKey, string> = {
   'contact.email': 'Email',
   'contact.message': 'Message',
   'contact.send': 'Envoyer',
+  'contact.copy': 'Copier mon email',
   'notes.title': 'Notes',
   'notes.empty': 'Rien pour l’instant.',
+  'tech.daily': 'Au quotidien',
+  'tech.languages': 'Langages',
+  'tech.front': 'Front-end',
+  'tech.back': 'Back-end',
+  'tech.data': 'Données & DevOps',
+  'tech.tools': 'Outils',
+  'tech.title': 'Technologies',
+  'tech.intro': 'Les outils que j’utilise dans mes projets — survolez-en un pour le voir en couleur.',
+  'tech.method': 'Ma façon de travailler',
 };
 
 const tr: Record<UiKey, string> = {
@@ -135,8 +166,11 @@ const tr: Record<UiKey, string> = {
   'nav.notes': 'Notlar',
   'nav.about': 'Hakkında',
   'nav.contact': 'İletişim',
-  'home.role': 'Full-stack geliştirici · AI destekli mühendislik · Paris',
-  'home.bio': 'Université Paris 8’de bilgisayar bilimleri son sınıf öğrencisiyim. Full-stack uygulamaları ve iş araçlarını tasarım dokümanlarından (kullanım senaryoları, veri modeli, API şartnameleri) bakımı kolay, test edilmiş koda kadar götürüyorum. AI kodlama ajanlarıyla çalışıyor ve yayına çıkan her satırı kendim inceliyorum — araçlarımdan biri staj yaptığım ekipte her gün kullanılıyor.',
+  'home.role': 'Full-stack geliştirici · Paris',
+  'meta.role': 'Full-stack geliştirici',
+  '404.title': 'Sayfa bulunamadı',
+  '404.back': 'Ana sayfaya dön',
+  'home.bio': 'Université Paris 8’de bilgisayar bilimleri son sınıf öğrencisiyim. Full-stack uygulamaları ve iş araçlarını tasarım dokümanlarından (kullanım senaryoları, veri modeli, API şartnameleri) bakımı kolay, test edilmiş koda kadar götürüyorum. Araçlarımdan biri staj yaptığım ekipte her gün kullanılıyor.',
   'home.available': 'Bitirme stajı arıyorum · Mart–Temmuz 2027',
   'home.cv': 'CV’yi indir',
   'home.featured': 'Seçili projeler',
@@ -150,7 +184,8 @@ const tr: Record<UiKey, string> = {
   'home.artLink': 'İşlere bak',
   'home.readMore': 'Devamı',
   'projects.title': 'Projeler',
-  'projects.intro': 'SAE’ler, stajlar ve freelance işler, en yeniden eskiye.',
+  'projects.intro': 'SAE’ler ve stajlar, en yeniden eskiye.',
+  'hero.caption': 'üretken · bozmak için üzerine gel ya da dokun',
   'art.title': 'İşler',
   'art.intro': 'Geliştirici işimin yanında yaptığım kolajlar, VJ görselleri, generatif çalışmalar ve live coding müzik.',
   'art.radio': 'Radyoyu dinle',
@@ -186,8 +221,18 @@ const tr: Record<UiKey, string> = {
   'contact.email': 'E-posta',
   'contact.message': 'Mesaj',
   'contact.send': 'Gönder',
+  'contact.copy': 'E-postamı kopyala',
   'notes.title': 'Notlar',
   'notes.empty': 'Henüz bir şey yok.',
+  'tech.daily': 'Her gün',
+  'tech.languages': 'Diller',
+  'tech.front': 'Front-end',
+  'tech.back': 'Back-end',
+  'tech.data': 'Veri & DevOps',
+  'tech.tools': 'Araçlar',
+  'tech.title': 'Teknolojiler',
+  'tech.intro': 'Projelerimde kullandığım araçlar — rengini görmek için üstüne gel.',
+  'tech.method': 'Nasıl çalışıyorum',
 };
 
 export const ui: Record<Lang, Record<UiKey, string>> = { en, fr, tr };

@@ -1,0 +1,35 @@
+---
+title: Climat Fitness
+summary: Une application mobile pour une salle de sport éco-responsable à Montreuil, où les machines transforment l’effort en électricité. Premier parcours — pré-inscription, inscription et connexion — en 12 écrans.
+kind: dev
+year: 2026
+order: 9
+status: in-progress
+context: SAÉ S5 · BUT 3
+team: 5 étudiants, pour un vrai porteur de projet
+role: UI/UX et tout le code jusqu’ici — tout sauf le modèle de données
+stack: [Expo SDK 58, React Native, TypeScript, expo-router, react-hook-form · Zod]
+featured: true
+cover: ../../../assets/work/climat-cover.jpg
+coverAlt: Trois écrans de l’application Climat Fitness — accueil, choix de la formule et espace membre
+---
+
+
+## Le parcours
+
+Se pré-inscrire en quatre étapes sans compte, transformer cette pré-inscription en compte en quatre autres, puis se connecter. Douze écrans : accueil, coordonnées, choix de la formule (Standard ou Gaïa), récapitulatif, confirmation, création du compte, formule, récapitulatif du compte, vérification de l’e-mail, connexion, mot de passe oublié, espace membre.
+
+## Démonstration
+
+<video src="/video/climat-walkthrough.mp4" controls muted playsinline preload="metadata" style="width:100%;border-radius:8px;border:1px solid #e4e7ec"></video>
+
+## Comment c’est construit
+
+- **Une seule base de code.** Expo génère iOS, Android et le web à partir du même code. Testée sur téléphone avec Expo Go, présentée dans le navigateur.
+- **`app/` = les écrans.** Avec expo-router, chaque fichier de `app/` est un écran : le dossier se lit comme le parcours.
+- **Formulaires.** react-hook-form avec des schémas Zod : une seule source de vérité pour la validation, comme la règle du mot de passe de 12 caractères.
+- **`theme.ts`.** Les couleurs des maquettes sont dans un seul fichier de constantes, pour que le design et le code ne divergent pas.
+
+## Encore à venir, d’après le cahier des charges
+
+Un QR code dynamique pour entrer dans la salle, des cours vidéo à domicile et le suivi par un coach, et un tableau de bord de l’énergie produite par les machines.

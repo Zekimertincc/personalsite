@@ -1,0 +1,48 @@
+---
+title: Plateforme de tournois en temps réel
+summary: Une plateforme de tournois inter-IUT. Les équipes se forment, les capitaines acceptent les membres, l’arbre avance match par match, et chaque écran se met à jour sans rechargement.
+kind: dev
+year: 2026
+order: 10
+status: in-progress
+context: SAÉ S5 · R5.A.05, sujet B
+team: Binôme
+role: Tout le back-end, puis la fin du front-end
+stack: [Express 5, TypeScript, Socket.io, SQLite · SQL natif, JWT · bcrypt, Jest · Supertest, Swagger, React · TanStack Query]
+links:
+  - { label: Dépôt de l’API, href: "https://github.com/DUT-Info-Montreuil/R5A5_2026_SUJETB_INCEOGLU_HANOUNE_BACK" }
+  - { label: Dépôt du front, href: "https://github.com/DUT-Info-Montreuil/R5A5_2026_SUJETB_INCEOGLU_HANOUNE_FRONT" }
+featured: true
+illustration: bracket
+---
+
+## Architecture
+
+Toutes les écritures passent par l’API REST et ses contrôles d’accès. Socket.io ne fait que diffuser ce qui vient de se passer, dans des salles par tournoi, par équipe et par utilisateur : il n’y a qu’une seule porte à sécuriser. Le même JWT authentifie les deux canaux, et l’API et le temps réel partagent un seul port.
+
+Les routes font les contrôles d’accès, puis la validation, puis appellent un service. Les services portent les règles de l’arbre et des matchs. SQLite est derrière un repository par table, avec les clés étrangères activées et une base en mémoire par fichier de test.
+
+## Décisions
+
+Cinq décisions documentées dans le dépôt :
+
+1. **Logs** — Winston plutôt que Pino : lignes JSON, console plus un fichier journalier conservé 14 jours, `warn` pour chaque refus.
+2. **Règles de l’arbre et du forfait** — comment l’arbre est construit et ce que fait un forfait.
+3. **PostgreSQL → SQLite** — nous avons commencé avec PostgreSQL et changé après avoir mesuré le coût d’installation et de réécriture. SQLite garde les clés étrangères et les transactions, et tourne avec un simple `npm install`.
+4. **Temps réel** — salles Socket.io ; les écritures restent en REST, les sockets ne font que diffuser.
+5. **Authentification** — un JWT qui ne porte que l’id et le rôle, hachage bcrypt, middleware 401/403, et un test de refus pour chaque règle d’accès.
+
+**144 tests** (Jest + Supertest) vérifient chaque règle d’accès, et que rien n’a changé après un refus.
+
+## Comment il a été construit
+
+Développement assisté par des agents, documenté dans un [rapport public](https://github.com/DUT-Info-Montreuil/R5A5_2026_SUJETB_INCEOGLU_HANOUNE_BACK/blob/main/docs/ia/rapport-ia.md). Claude Code a écrit la majeure partie du code livré. J’ai conçu le système, découpé le travail en tâches, écrit les prompts et relu chaque diff. Rien n’a été commité sans relecture humaine.
+
+- **Un CLAUDE.md** dans chaque dépôt : conventions, les 19 exigences, un test de refus pour chaque règle d’accès, ne jamais commiter seul.
+- **Un sous-agent `reviewer` en lecture seule** vérifie chaque diff avant le commit : failles d’accès, écarts avec le cahier des charges, tests de refus manquants, secrets dans les logs.
+- **Deux sessions en parallèle**, une sur l’API et une sur le front, pilotées en partie depuis mon téléphone dans la journée, diffs relus le soir.
+- **Chaque tâche se termine de la même façon :** `npm test` → `tsc` → reviewer → corriger ce qui tient → `git diff --stat` → s’arrêter et m’attendre.
+
+**Un bug trouvé par une session dans le code de l’autre.** En testant les écrans d’arbitrage, la session front a remarqué qu’après un double forfait, l’API acceptait encore un résultat : une équipe éliminée pouvait revenir. Les tests du back étaient verts parce qu’ils testaient ce à quoi l’agent avait pensé. Correctif : 409 sur les résultats et les forfaits des équipes éliminées, plus des tests qui vérifient que l’arbre ne bouge pas.
+
+**Ce que ça a coûté :** du temps de relecture sur les longs diffs, de la vigilance face aux tests qui passent mais ratent des cas, et de la pratique du code à la main, que j’entretiens à côté.
